@@ -27,6 +27,7 @@ class StartJourney:
         pass
 
 class StopJourney:
+    '''intento de implementar un usercase para actualizar el dato de la db y ponerle fecha de termino al journey'''
     def __init__(self, repository: JourneyRepository, notifier: Notifier):
         self.repository = repository
         self.notifier = notifier

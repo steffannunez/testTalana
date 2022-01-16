@@ -30,61 +30,47 @@ class Vehicle(models.Model):
         return self.vehicle_type.max_capacity < self.passengers
     
     def get_distribution(self) -> array:
+        #se obtiene la maxima capacidad del vehiculo
+        #se genera una matriz por defecto 
         mc=self.vehicle_type.max_capacity
-        matrix=[[ False, False],
-                        [ False, False],
-                        [ False, False]]
-        if mc == 6:
-            matrixVan = [[ False, False],
-                        [ False, False],
-                        [ False, False]]
-            passager = 0
-            row = 0
-            col = 0 
-            while row < 3:
-                while col < 2:
-                    if ((not matrixVan[row][col]) and passager < mc-1):
-                        matrixVan[row][col] = True
-                        passager = passager + 1
-                    if (passager == mc):
-                        return matrixVan
-                    col = col +1
-                row = row + 1
-                col = 0
-            if passager < mc:
-                return matrixVan
-
-        if mc == 4:
-            matrixCar = [[ False, False],
-                        [ False, False]]
-            passager = 0
-            row = 0
-            col = 0 
-            while row < 2:
-                while col < 2:
-                    if ((not matrixCar[row][col]) and passager < mc-1):
-                        matrixCar[row][col] = True
-                        passager = passager + 1
-                    if (passager == mc):
-                        return matrixCar
-                    col = col +1
-                row = row + 1
-                col = 0
-            if passager < mc:
-                return matrixCar
+        rowModel=[False, False]
+        cantRow=0
+        matrix=[]
+        while cantRow < mc/2:
+            matrix.append(rowModel.copy())
+            cantRow = cantRow+1
+        
+        passager = 0
+        row = 0
+        col = 0 
+        while row < len(matrix):
+            while col < 2:
+                if ((not matrix[row][col]) and passager < mc-1):
+                    matrix[row][col] = True
+                    passager = passager + 1
+                if (passager == mc):
+                    return matrix
+                col = col +1
+            row = row + 1
+            col = 0
+        if passager < mc:
+            return matrix
         return matrix
     def validate_number_plate(plate:str)->bool:
+        #metodo a lo bestia jaja
+        #revisa todos los valores y verifica que los valores sean numericos donde deben 
+        #verifica los guiones y que los primeros dos caracteres no sean letras 
         '''AA-12-34'''
         try :
-            alpha1=plate[0].isdigit()
-            alpha2=plate[1].isdigit()
+            alpha1=plate[0].isalpha()
+            alpha2=plate[1].isalpha()
             guion1=plate[2]=="-"
             digit1=plate[3].isdigit()
             digit2=plate[4].isdigit()
             guion2=plate[5]=="-"            
             digit3=plate[6].isdigit()
             digit4=plate[7].isdigit()
-            if ((not alpha1) and (not alpha2) and guion1 and guion2 and digit1 and digit2 and digit3 and digit4):
+            if ( alpha1 and alpha2 and guion1 and guion2 and digit1 and digit2 and digit3 and digit4):
                 return True
             else:
                 return False
@@ -101,6 +87,9 @@ class Journey(models.Model):
         return f"{self.vehicle.name} ({self.start} - {self.end})"
 
     def is_finished(self):
+        #metodo para saber si un journey ha finalizado 
+        #si self.end tiene un largo -es decir- no es nulo, entonces el viaje si termino -True
+        #caso contrario retorna False --el viaje no ha terminado
         try :
             if len(self.end) > 0:
                 return True
